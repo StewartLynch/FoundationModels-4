@@ -22,7 +22,7 @@ struct PromptRequestTemplateView: View {
     @Environment(FoundationManager.self) var manager
     @Environment(\.scenePhase) private var scenePhase
     @State private var session = LanguageModelSession()
-
+    @State private var response = ""
     var body: some View {
         VStack {
             // Prompt Criteria
@@ -30,7 +30,7 @@ struct PromptRequestTemplateView: View {
             if manager.isModelAvailable {
                 Button("Button Label") {
                     guard manager.checkIsAvailable() else { return }
-                    manager.response = ""
+                    response = ""
                     Task {
                         // request response
 
@@ -38,7 +38,7 @@ struct PromptRequestTemplateView: View {
                 }
                 .buttonStyle(.glassProminent)
                 ScrollView{
-                    Text(LocalizedStringKey(manager.response))
+                    Text(LocalizedStringKey(response))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .padding()
                 }

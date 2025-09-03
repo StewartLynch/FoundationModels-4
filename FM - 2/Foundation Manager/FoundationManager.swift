@@ -21,8 +21,6 @@ import FoundationModels
 @Observable
 final class FoundationManager {
     var notAvailableReason = "Checking model availability..."
-    var prompt: Prompt?
-    var response: String = ""
     var isModelAvailable: Bool {
         notAvailableReason.isEmpty
     }
@@ -48,35 +46,48 @@ final class FoundationManager {
         return isModelAvailable
     }
     
-    func getResponse(from topic: String, session: LanguageModelSession) async {
-        prompt = Prompt("Create a two verse about \(topic) in the style of William Shakespeare.  Do not return any preamble.  Just return the two verse poem.")
-        
-        if let prompt {
-            do {
-                response =  try await session.respond(to: prompt).content
-            } catch {
-                response = error.localizedDescription
+    func getResponse(from prompt: Prompt, session: LanguageModelSession) async -> String{
+//                return try! await session.respond(to: prompt).content
+        var responseText = ""
+        do {
+            #warning("Added for this video")
+            responseText =  minimizeMarkDown(try await session.respond(to: prompt).content)
+        } catch let error as LanguageModelSession.GenerationError {
+            switch error {
+//            case .exceededContextWindowSize(let context):
+//
+//            case .assetsUnavailable(let context):
+//
+            case .guardrailViolation(let context):
+                responseText = "Guardrail violation: \(context.debugDescription)\n"
+//            case .unsupportedGuide(let context):
+//
+//            case .unsupportedLanguageOrLocale(let context):
+//
+            case .decodingFailure(let context):
+                responseText = "Decoding failure: \(context.debugDescription)\n"
+//            case .rateLimited(let context):
+//
+//            case .concurrentRequests(let context):
+//
+//            case .refusal(let refusal, let context):
+            default:
+                responseText = "Other error: \(error.localizedDescription)\n"
             }
+            if let failureReason = error.failureReason {
+                responseText += failureReason + "\n"
+            }
+            if let recovertSuggestion = error.recoverySuggestion {
+                responseText += recovertSuggestion
+            }
+        } catch {
+            return error.localizedDescription
         }
+        return responseText
     }
     
-    func getResponse(for stretchType: StretchType, length: Double,  session: LanguageModelSession) async  {
-        prompt = Prompt {
-            "Create an stretching exercise for me."
-            "Focus the exercies on \(stretchType.rawValue)"
-            "Have the exerecise last for \(Int(length)) minutes"
-        }
-        if let prompt {
-            do {
-//                var content = try await session.respond(to: prompt).content
-                response = minimizeMarkDown(try await session.respond(to: prompt).content)
-
-            } catch {
-                response = error.localizedDescription
-            }
-        }
-    }
     
+#warning("Added for this video")
     func minimizeMarkDown(_ content: String) -> String {
         var content = content
         let tags = ["#", "##", "###", "####", "---"]
@@ -84,28 +95,5 @@ final class FoundationManager {
             content = content.replacingOccurrences(of: tag, with: "")
         }
         return content
-    }
-    
-    func get30MinuteRoutine(session: LanguageModelSession, prompt: Prompt) async {
-            do {
-                response = minimizeMarkDown(try await session.respond(to: prompt).content)
-            } catch let error as LanguageModelSession.GenerationError {
-                switch error {
-                case .guardrailViolation(let context):
-                response += "Guardrail violation: \(context.debugDescription)\n"
-                case .decodingFailure(let context):
-                response += "Decoding failure: \(context.debugDescription)\n"
-                default:
-                response += "Other error: \(error.localizedDescription)\n"
-                }
-                if let failureReason = error.failureReason {
-                    response += failureReason + "\n"
-                }
-                if let recovertSuggestion = error.recoverySuggestion {
-                    response += recovertSuggestion
-                }
-            } catch {
-                response = error.localizedDescription
-            }
     }
 }

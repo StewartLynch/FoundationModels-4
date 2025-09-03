@@ -18,7 +18,6 @@
 import SwiftUI
 
 enum MyTabs: String, CaseIterable, View {
-    case shakespeare = "Shakespeare Revisited"
     case promptBuilder = "Workout"
     case promptArrays = "Full Workout"
     case chat = "Tourist Info"
@@ -26,8 +25,6 @@ enum MyTabs: String, CaseIterable, View {
     var id: Self { self }
     var body: some View {
         switch self {
-        case .shakespeare:
-            Shakespeare()
         case .promptBuilder:
             ThePromptBuilder()
         case .promptArrays:
@@ -41,7 +38,7 @@ enum MyTabs: String, CaseIterable, View {
 
 
 struct StartTab: View {
-    @State private var selectedTab = MyTabs.shakespeare
+    @State private var selectedTab = MyTabs.promptBuilder
     @Environment(FoundationManager.self) var manager
     var body: some View {
         NavigationStack {
@@ -57,9 +54,6 @@ struct StartTab: View {
                 }
             }
             .navigationTitle(selectedTab.rawValue)
-            .onChange(of: selectedTab) {
-                manager.response = ""
-            }
         }
     }
 }

@@ -25,6 +25,7 @@ struct ThePromptBuilder: View {
     @State private var session = LanguageModelSession()
     @State private var stretchType = StretchType.lback
     @State private var length: Double = 10
+    @State private var response = ""
     var body: some View {
         VStack {
             Picker("Stretch Type", selection: $stretchType) {
@@ -50,14 +51,19 @@ struct ThePromptBuilder: View {
             if manager.isModelAvailable {
                 Button("Create Exercise") {
                     guard manager.checkIsAvailable() else { return }
-                    manager.response = ""
+                    response = ""
                     Task {
-                        await manager.getResponse(for: stretchType, length: length, session: session)
+                        let prompt = Prompt {
+                            "Create an stretching exercise for me."
+                            "Focus the exercies on \(stretchType.rawValue)"
+                            "Have the exerecise last for \(Int(length)) minutes"
+                        }
+                        response = await manager.getResponse(from: prompt, session: session)
                     }
                 }
                 .buttonStyle(.glassProminent)
                 ScrollView{
-                    Text(LocalizedStringKey(manager.response))
+                    Text(LocalizedStringKey(response))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .padding()
                 }

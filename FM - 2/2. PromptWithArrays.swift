@@ -26,6 +26,7 @@ struct PromptWithArrays: View {
         "Create a 30 minute stretching routine for me giving 10 minutes to each of the following areas:"
         StretchType.allCases.map { Prompt($0.rawValue)}
     }
+    @State private var response = ""
     var body: some View {
         VStack {
             // Prompt Criteria
@@ -33,15 +34,16 @@ struct PromptWithArrays: View {
             if manager.isModelAvailable {
                 Button("Get 30 minute routine") {
                     guard manager.checkIsAvailable() else { return }
-                    manager.response = ""
+                    response = ""
                     Task {
                         // request response
-                        await manager.get30MinuteRoutine(session: session, prompt: prompt)
+//                        await manager.get30MinuteRoutine(session: session, prompt: prompt)
+                        response = await manager.getResponse(from: prompt, session: session)
                     }
                 }
                 .buttonStyle(.glassProminent)
                 ScrollView{
-                    Text(LocalizedStringKey(manager.response))
+                    Text(LocalizedStringKey(response))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .padding()
                 }
