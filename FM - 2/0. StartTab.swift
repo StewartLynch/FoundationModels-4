@@ -19,9 +19,9 @@ import SwiftUI
 
 enum MyTabs: String, CaseIterable, View {
     case shakespeare = "Shakespeare Revisited"
-    case promptBuilder = "Prompt Builder"
-    case promotArrays = "Promt Arrays"
-    case chat = "Chat"
+    case promptBuilder = "Workout"
+    case promptArrays = "Full Workout"
+    case chat = "Tourist Info"
     
     var id: Self { self }
     var body: some View {
@@ -30,7 +30,7 @@ enum MyTabs: String, CaseIterable, View {
             Shakespeare()
         case .promptBuilder:
             ThePromptBuilder()
-        case .promotArrays:
+        case .promptArrays:
             PromptWithArrays()
         case .chat:
             MyChat()
