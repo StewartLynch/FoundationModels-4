@@ -153,11 +153,13 @@ struct MyChat: View {
         question = ""
         Task {
             let prompt = Prompt(trimmedQuestion)
-            do {
-                let answer = try await session.respond(to: prompt).content
-                if conversation.indices.contains(index) {
-                    conversation[index].answer = answer
-                    scrollPosition.scrollTo(edge: .bottom)
+            let stream = session.streamResponse(to: prompt)
+            do  {
+                for try await partial in stream {
+                    if conversation.indices.contains(index) {
+                        conversation[index].answer = partial.content
+                        scrollPosition.scrollTo(edge: .bottom)
+                    }
                 }
             } catch {
                 if conversation.indices.contains(index) {
