@@ -16,14 +16,36 @@
 
 
 import SwiftUI
+import FoundationModels
 
 struct TestVoew: View {
-    let items = (1...10).map { "Row \($0)" }
+    @State private var session = LanguageModelSession()
+    @State private var currentPrompt: String = ""
 
     var body: some View {
-        Image(systemName: "ellipsis")
-            .symbolEffect(.variableColor)
-            .font(.largeTitle)
+        VStack {
+            ScrollView {
+                ForEach(session.transcript) { entry in
+                    Text(entry.description)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.bottom)
+                }
+            }
+            .padding()
+            HStack {
+                TextField("Prompt...", text: $currentPrompt)
+                    .textFieldStyle(.roundedBorder)
+                Button("Send") {
+                    Task {
+                        _ = try? await session.respond(to: currentPrompt)
+                        currentPrompt = ""
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+            }
+        }
+        .padding()
+        .font(.title)
     }
 }
 

@@ -28,9 +28,9 @@ enum MyTabs: String, CaseIterable, View {
         case .promptBuilder:
             ThePromptBuilder()
         case .promptArrays:
-            PromptWithArrays()
+            Prompt_Stream_WithArrays()
         case .chat:
-            MyChat()
+            MultiTurnSession()
         }
         
     }

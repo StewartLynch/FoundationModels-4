@@ -18,7 +18,7 @@
 import SwiftUI
 import FoundationModels
 
-struct PromptWithArrays: View {
+struct Prompt_Stream_WithArrays: View {
     @Environment(FoundationManager.self) var manager
     @Environment(\.scenePhase) private var scenePhase
     @State private var session = LanguageModelSession()
@@ -36,11 +36,18 @@ struct PromptWithArrays: View {
                     guard manager.checkIsAvailable() else { return }
                     response = ""
                     Task {
-                        // request response
-//                        await manager.get30MinuteRoutine(session: session, prompt: prompt)
-                        response = await manager.getResponse(from: prompt, session: session)
+//                        let stream = session.streamResponse(to: prompt)
+//                        for try await partial in stream {
+//                            response =  partial.content
+//                        }
+                        await manager.getStream(from: prompt, session: session) { partial in
+                            response = partial
+                        }
                     }
-                }
+//                }
+//                        response = await manager.getResponse(from: prompt, session: session)
+                    }
+//                }
                 .buttonStyle(.glassProminent)
                 ScrollView{
                     Text(LocalizedStringKey(response))
@@ -54,7 +61,7 @@ struct PromptWithArrays: View {
                     if session.isResponding {
                         VStack {
                             ProgressView()
-                            Text("Thinking....").font(.largeTitle)
+//                            Text("Thinking....").font(.largeTitle)
                         }
                     }
                 }
@@ -76,6 +83,6 @@ struct PromptWithArrays: View {
 }
 
 #Preview {
-    PromptWithArrays()
+    Prompt_Stream_WithArrays()
         .environment(FoundationManager())
 }

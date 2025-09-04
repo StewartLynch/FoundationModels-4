@@ -24,7 +24,7 @@ final class FoundationManager {
     var isModelAvailable: Bool {
         notAvailableReason.isEmpty
     }
-
+    
     init() {
         checkIsAvailable()
     }
@@ -46,31 +46,41 @@ final class FoundationManager {
         return isModelAvailable
     }
     
+#warning("Added for this video")
+    func minimizeMarkDown(_ content: String) -> String {
+        var content = content
+        let tags = ["#", "##", "###", "####", "---"]
+        tags.forEach { tag in
+            content = content.replacingOccurrences(of: tag, with: "")
+        }
+        return content
+    }
+    
     func getResponse(from prompt: Prompt, session: LanguageModelSession) async -> String{
-//                return try! await session.respond(to: prompt).content
+        //                return try! await session.respond(to: prompt).content
         var responseText = ""
         do {
-            #warning("Added for this video")
+#warning("Added for this video")
             responseText =  minimizeMarkDown(try await session.respond(to: prompt).content)
         } catch let error as LanguageModelSession.GenerationError {
             switch error {
-//            case .exceededContextWindowSize(let context):
-//
-//            case .assetsUnavailable(let context):
-//
+                //            case .exceededContextWindowSize(let context):
+                //
+                //            case .assetsUnavailable(let context):
+                //
             case .guardrailViolation(let context):
                 responseText = "Guardrail violation: \(context.debugDescription)\n"
-//            case .unsupportedGuide(let context):
-//
-//            case .unsupportedLanguageOrLocale(let context):
-//
+                //            case .unsupportedGuide(let context):
+                //
+                //            case .unsupportedLanguageOrLocale(let context):
+                //
             case .decodingFailure(let context):
                 responseText = "Decoding failure: \(context.debugDescription)\n"
-//            case .rateLimited(let context):
-//
-//            case .concurrentRequests(let context):
-//
-//            case .refusal(let refusal, let context):
+                //            case .rateLimited(let context):
+                //
+                //            case .concurrentRequests(let context):
+                //
+                //            case .refusal(let refusal, let context):
             default:
                 responseText = "Other error: \(error.localizedDescription)\n"
             }
@@ -86,14 +96,33 @@ final class FoundationManager {
         return responseText
     }
     
-    
-#warning("Added for this video")
-    func minimizeMarkDown(_ content: String) -> String {
-        var content = content
-        let tags = ["#", "##", "###", "####", "---"]
-        tags.forEach { tag in
-            content = content.replacingOccurrences(of: tag, with: "")
+    func getStream(from prompt: Prompt, session: LanguageModelSession, completion: (String) -> ()) async {
+        var responseText = ""
+        do {
+            let stream = session.streamResponse(to: prompt)
+            for try await partial in stream {
+                completion(partial.content)
+            }
+            completion(minimizeMarkDown(try await session.respond(to: prompt).content))
+        } catch let error as LanguageModelSession.GenerationError {
+            switch error {
+            case .guardrailViolation(let context):
+                responseText = "Guardrail violation: \(context.debugDescription)\n"
+            case .decodingFailure(let context):
+                responseText = "Decoding failure: \(context.debugDescription)\n"
+            default:
+                responseText = "Other error: \(error.localizedDescription)\n"
+            }
+            if let failureReason = error.failureReason {
+                responseText += failureReason + "\n"
+            }
+            if let recovertSuggestion = error.recoverySuggestion {
+                responseText += recovertSuggestion
+            }
+            completion(responseText)
+        } catch {
+            completion(error.localizedDescription)
         }
-        return content
     }
+
 }
