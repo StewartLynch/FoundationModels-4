@@ -6,13 +6,8 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		BBF851C12E67B2AF00365434 /* TestVoew.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF851C02E67B2AF00365434 /* TestVoew.swift */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 		BB1F85502E64E6DE0089FA0D /* FM - 2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "FM - 2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		BBF851C02E67B2AF00365434 /* TestVoew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestVoew.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -37,7 +32,6 @@
 		BB1F85472E64E6DE0089FA0D = {
 			isa = PBXGroup;
 			children = (
-				BBF851C02E67B2AF00365434 /* TestVoew.swift */,
 				BB1F85522E64E6DE0089FA0D /* FM - 2 */,
 				BB1F85512E64E6DE0089FA0D /* Products */,
 			);
@@ -125,7 +119,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BBF851C12E67B2AF00365434 /* TestVoew.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

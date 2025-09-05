@@ -56,6 +56,7 @@ final class FoundationManager {
         return content
     }
     
+    @discardableResult
     func getResponse(from prompt: Prompt, session: LanguageModelSession) async -> String{
         //                return try! await session.respond(to: prompt).content
         var responseText = ""

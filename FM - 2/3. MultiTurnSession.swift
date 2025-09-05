@@ -127,25 +127,14 @@ struct MultiTurnSession: View {
                 )
     }
     private func sendQuestion() {
-//        let trimmedQuestion = question.trimmingCharacters(in: .whitespacesAndNewlines)
-//        guard !trimmedQuestion.isEmpty else { return }
-//        question = ""
-//        Task {
-//            let prompt = Prompt(trimmedQuestion)
-//            let x = await manager.getStream(from: prompt, session: session)
-//            if let x {
-//                badPromptError = x
-//            }
-//            withAnimation {
-//                scrollPosition.scrollTo(edge: .bottom)
-//            }
-//        }
         let trimmedQuestion = question.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedQuestion.isEmpty else { return }
         question = ""
         Task {
             let prompt = Prompt(trimmedQuestion)
-            _ = await manager.getResponse(from: prompt, session: session)
+            // Do not need the response as we are just looking at the transcript
+            // If it were not a discardable result we would need _ = await ...
+            await manager.getResponse(from: prompt, session: session)
             withAnimation {
                 scrollPosition.scrollTo(edge: .bottom)
             }
