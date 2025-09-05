@@ -40,8 +40,8 @@ struct Prompt_Stream_WithArrays: View {
 //                        for try await partial in stream {
 //                            response =  partial.content
 //                        }
-                        await manager.getStream(from: prompt, session: session) { partial in
-                            response = partial
+                        await manager.getStream(from: prompt, session: session) { content in
+                            response = manager.minimizeMarkDown(content)
                         }
                     }
 //                }
