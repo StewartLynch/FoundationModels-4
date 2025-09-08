@@ -20,6 +20,7 @@ import FoundationModels
 
 struct Prompt_Stream_WithArrays: View {
     @Environment(FoundationManager.self) var manager
+    @Environment(NavManager.self) var navManager
     @Environment(\.scenePhase) private var scenePhase
     @State private var session = LanguageModelSession()
     @State private var prompt = Prompt {
@@ -28,61 +29,64 @@ struct Prompt_Stream_WithArrays: View {
     }
     @State private var response = ""
     var body: some View {
-        VStack {
-            // Prompt Criteria
-            
-            if manager.isModelAvailable {
-                Button("Get 30 minute routine") {
-                    guard manager.checkIsAvailable() else { return }
-                    response = ""
-                    Task {
-                        let stream = session.streamResponse(to: prompt)
-                        do {
-                            for try await partial in stream {
-                                response = manager.minimizeMarkDown(partial.content)
+        NavigationStack {
+            VStack {
+                // Prompt Criteria
+                
+                if manager.isModelAvailable {
+                    Button("Get 30 minute routine") {
+                        guard manager.checkIsAvailable() else { return }
+                        response = ""
+                        Task {
+                            let stream = session.streamResponse(to: prompt)
+                            do {
+                                for try await partial in stream {
+                                    response = manager.minimizeMarkDown(partial.content)
+                                }
+                            } catch let error as LanguageModelSession.GenerationError {
+                                switch error {
+                                case .guardrailViolation(let context):
+                                    print("Guardrail violation: \(context.debugDescription)")
+                                case .decodingFailure(let context):
+                                    print("Decoding failure: \(context.debugDescription)")
+                                default:
+                                    print("Other error: \(error.localizedDescription)")
+                                }
+                                if let failureReason = error.failureReason {
+                                    print(failureReason)
+                                }
+                                if let recoverySuggestion = error.recoverySuggestion {
+                                    print(recoverySuggestion)
+                                }
+                            } catch {
+                                print(error.localizedDescription)
                             }
-                        } catch let error as LanguageModelSession.GenerationError {
-                            switch error {
-                            case .guardrailViolation(let context):
-                                print("Guardrail violation: \(context.debugDescription)")
-                            case .decodingFailure(let context):
-                                print("Decoding failure: \(context.debugDescription)")
-                            default:
-                                print("Other error: \(error.localizedDescription)")
-                            }
-                            if let failureReason = error.failureReason {
-                                print(failureReason)
-                            }
-                            if let recoverySuggestion = error.recoverySuggestion {
-                                print(recoverySuggestion)
-                            }
-                        } catch {
-                            print(error.localizedDescription)
                         }
                     }
-                }
-                .buttonStyle(.glassProminent)
-                ScrollView{
-                    Text(LocalizedStringKey(response))
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding()
-                }
-                .scrollBounceBehavior(.basedOnSize)
-                .background(.quinary)
-                .clipShape(.rect(cornerRadius: 20))
-                .overlay {
-                    if session.isResponding {
-                        VStack {
-                            ProgressView()
-                            //                            Text("Thinking....").font(.largeTitle)
+                    .buttonStyle(.glassProminent)
+                    ScrollView{
+                        Text(LocalizedStringKey(response))
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding()
+                    }
+                    .scrollBounceBehavior(.basedOnSize)
+                    .background(.quinary)
+                    .clipShape(.rect(cornerRadius: 20))
+                    .overlay {
+                        if session.isResponding {
+                            VStack {
+                                ProgressView()
+                                //                            Text("Thinking....").font(.largeTitle)
+                            }
                         }
                     }
+                } else {
+                    IntelligenceUnavailableView()
                 }
-            } else {
-                IntelligenceUnavailableView()
             }
+            .padding()
+            .navigationTitle(navManager.selectedTab.rawValue)
         }
-        .padding()
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
                 manager.checkIsAvailable()
@@ -98,4 +102,5 @@ struct Prompt_Stream_WithArrays: View {
 #Preview {
     Prompt_Stream_WithArrays()
         .environment(FoundationManager())
+        .environment(NavManager())
 }

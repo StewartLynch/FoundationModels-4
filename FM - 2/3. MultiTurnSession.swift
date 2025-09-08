@@ -27,6 +27,7 @@ struct MultiTurnSession: View {
     @State private var session:LanguageModelSession
     @State private var question: String = ""
     @Environment(FoundationManager.self) var manager
+    @Environment(NavManager.self) var navManager
     @Environment(\.scenePhase) var scenePhase
     private let instructions = Instructions {
         "You work in a Tourist Information Center."
@@ -42,89 +43,96 @@ struct MultiTurnSession: View {
     @State private var screenWidth: CGFloat = 0
     @State private var badPromptError: String?
     var body: some View {
-        VStack {
-            if manager.isModelAvailable {
-                if session.transcript.count > 1 {
-                    ScrollViewReader { proxy in
-                        ScrollView {
-                            ForEach(session.transcript) { entry in
-                                HStack {
-                                    if let interaction = getInteraction(for: entry) {
-                                        if !interaction.bot {
-                                            Spacer(minLength: 40)
-                                        }
-                                        ChatBubble(text: interaction.text, isBot: interaction.bot, width: screenWidth * 0.8)
-                                        if interaction.bot {
-                                            Spacer(minLength: 40)
+        NavigationStack{
+            VStack {
+                if manager.isModelAvailable {
+                    if session.transcript.count > 1 {
+                        ScrollViewReader { proxy in
+                            ScrollView {
+                                ForEach(session.transcript) { entry in
+                                    HStack {
+                                        if let interaction = getInteraction(for: entry) {
+                                            if !interaction.bot {
+                                                Spacer(minLength: 40)
+                                            }
+                                            ChatBubble(text: interaction.text, isBot: interaction.bot, width: screenWidth * 0.8)
+                                            if interaction.bot {
+                                                Spacer(minLength: 40)
+                                            }
                                         }
                                     }
                                 }
                             }
-                            if session.transcript.count > 1 && !session.isResponding {
-                                Button {
-                                    question = ""
-                                    session = LanguageModelSession(instructions: instructions)
-                                } label: {
-                                    Text("New Chat")
-                                }
-                                .frame(maxWidth: .infinity, alignment: .trailing)
-                                .padding(.horizontal)
-                                .buttonStyle(.glass)
-                                .disabled( session.isResponding)
+                            .scrollPosition($scrollPosition)
+                        }
+                        .padding()
+                    } else {
+                        ContentUnavailableView("How can I help?", systemImage: "questionmark.message", description: Text("I am your friendly Tourist Infomation Guide"))
+                    }
+                    HStack {
+                        TextField("Ask away ...", text: $question)
+                            .textFieldStyle(.roundedBorder)
+                            .onSubmit {
+                                sendQuestion()
                             }
-                        }
-                        .scrollPosition($scrollPosition)
                     }
-                    .padding()
+                    .overlay {
+                        if session.isResponding {
+                            Image(systemName: "ellipsis")
+                                .symbolEffect(.variableColor)
+                                .font(.title)
+                        }
+                    }
                 } else {
-                    ContentUnavailableView("How can I help?", systemImage: "questionmark.message", description: Text("I am your friendly Tourist Infomation Guide"))
+                    IntelligenceUnavailableView()
                 }
-                HStack {
-                    TextField("Ask away ...", text: $question)
-                        .textFieldStyle(.roundedBorder)
-                        .onSubmit {
-                            sendQuestion()
+            }
+            .navigationTitle(navManager.selectedTab.rawValue)
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+
+                        Button {
+                            question = ""
+                            session = LanguageModelSession(instructions: instructions)
+                        } label: {
+                            Text("New Chat")
+                        }
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .padding(.horizontal)
+                        .buttonStyle(.glass)
+
+                        .disabled(session.transcript.count  <= 1 || session.isResponding )
+                    }
+
+            }
+            .background(
+                GeometryReader { proxy in
+                    Color.clear
+                        .onAppear {
+                            screenWidth = proxy.size.width
+                        }
+                        .onChange(of: proxy.size.width) { _, newWidth in
+                            screenWidth = newWidth
                         }
                 }
-                .overlay {
-                    if session.isResponding {
-                        Image(systemName: "ellipsis")
-                            .symbolEffect(.variableColor)
-                            .font(.title)
-                    }
+            )
+            .padding()
+            .onChange(of: scenePhase) { _, newPhase in
+                if newPhase == .active {
+                    manager.checkIsAvailable()
+                    print("Model is available:", manager.isModelAvailable)
                 }
-            } else {
-                IntelligenceUnavailableView()
             }
+            .alert("Bad Prompt",
+                   isPresented: .constant(badPromptError != nil),
+                   actions: {
+                Button("OK", role: .cancel) { }
+            },
+                   message: {
+                Text(badPromptError ?? "")
+            }
+            )
         }
-        .background(
-            GeometryReader { proxy in
-                Color.clear
-                    .onAppear {
-                        screenWidth = proxy.size.width
-                        print("width:", screenWidth)
-                    }
-                    .onChange(of: proxy.size.width) { _, newWidth in
-                        screenWidth = newWidth
-                    }
-            }
-        )
-        .padding()
-        .onChange(of: scenePhase) { _, newPhase in
-            if newPhase == .active {
-                manager.checkIsAvailable()
-                print("Model is available:", manager.isModelAvailable)
-            }
-        }
-        .alert("Bad Prompt",
-               isPresented: .constant(badPromptError != nil),
-                       actions: {
-                           Button("OK", role: .cancel) { }
-                       },
-                       message: {
-                           Text(badPromptError ?? "")
-                       }
-                )
     }
     private func sendQuestion() {
         let trimmedQuestion = question.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -169,14 +177,14 @@ struct MultiTurnSession: View {
             return Interaction(text: (response.segments[0].description), bot: true)
         default:
             return nil
-//        case .instructions(let instructions):
-//            return "Instructions: \(instructions.segments[0].description)"
-//        case .toolCalls(let call):
-//            return "Tool Call: \(call.description)"
-//        case .toolOutput(let output):
-//            return "Tool Output: \(output.description)"
-//        @unknown default:
-//            return "Unknown entry type"
+            //        case .instructions(let instructions):
+            //            return "Instructions: \(instructions.segments[0].description)"
+            //        case .toolCalls(let call):
+            //            return "Tool Call: \(call.description)"
+            //        case .toolOutput(let output):
+            //            return "Tool Output: \(output.description)"
+            //        @unknown default:
+            //            return "Unknown entry type"
         }
     }
     
@@ -188,14 +196,14 @@ struct MultiTurnSession: View {
             return "AI: \(response.description)"
         default:
             return ""
-//        case .instructions(let instructions):
-//            return "Instructions: \(instructions.segments[0].description)"
-//        case .toolCalls(let call):
-//            return "Tool Call: \(call.description)"
-//        case .toolOutput(let output):
-//            return "Tool Output: \(output.description)"
-//        @unknown default:
-//            return "Unknown entry type"
+            //        case .instructions(let instructions):
+            //            return "Instructions: \(instructions.segments[0].description)"
+            //        case .toolCalls(let call):
+            //            return "Tool Call: \(call.description)"
+            //        case .toolOutput(let output):
+            //            return "Tool Output: \(output.description)"
+            //        @unknown default:
+            //            return "Unknown entry type"
         }
     }
 }
@@ -203,6 +211,7 @@ struct MultiTurnSession: View {
 #Preview {
     MultiTurnSession()
         .environment(FoundationManager())
+        .environment(NavManager())
 }
 
 private struct ChatBubble: View {

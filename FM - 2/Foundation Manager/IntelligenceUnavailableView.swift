@@ -18,15 +18,15 @@
 import SwiftUI
 
 struct IntelligenceUnavailableView: View {
-    @Environment(FoundationManager.self) var checker
+    @Environment(FoundationManager.self) var manager
     var body: some View {
         ContentUnavailableView {
             Label("AI Not available", systemImage: "apple.intelligence")
         } description: {
-            Text(checker.notAvailableReason)
+            Text(manager.notAvailableReason)
         } actions: {
             Button("Try again") {
-                checker.checkIsAvailable()
+                manager.checkIsAvailable()
             }
             .buttonStyle(.bordered)
         }

@@ -38,22 +38,20 @@ enum MyTabs: String, CaseIterable, View {
 
 
 struct StartTab: View {
-    @State private var selectedTab = MyTabs.promptBuilder
     @Environment(FoundationManager.self) var manager
+    @Environment(NavManager.self) var navManager
     var body: some View {
-        NavigationStack {
-            TabView(selection: $selectedTab) {
-                ForEach(MyTabs.allCases.indices, id: \.self) { index in
-                    let tab = MyTabs.allCases[index]
-                    Tab(
-                        tab.rawValue,
-                        systemImage: "\(index + 1).circle",
-                        value: tab) {
-                            tab
-                        }
-                }
+        @Bindable var navManager = navManager
+        TabView(selection: $navManager.selectedTab) {
+            ForEach(MyTabs.allCases.indices, id: \.self) { index in
+                let tab = MyTabs.allCases[index]
+                Tab(
+                    tab.rawValue,
+                    systemImage: "\(index + 1).circle",
+                    value: tab) {
+                        tab
+                    }
             }
-            .navigationTitle(selectedTab.rawValue)
         }
     }
 }
@@ -61,6 +59,7 @@ struct StartTab: View {
 #Preview {
     StartTab()
         .environment(FoundationManager())
+        .environment(NavManager())
 }
 
 
