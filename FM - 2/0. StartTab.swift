@@ -31,8 +31,7 @@ enum MyTabs: String, CaseIterable, View {
             Prompt_Stream_WithArrays()
         case .chat:
             MultiTurnSession()
-        }
-        
+        } 
     }
 }
 

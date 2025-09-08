@@ -76,7 +76,6 @@ struct Prompt_Stream_WithArrays: View {
                         if session.isResponding {
                             VStack {
                                 ProgressView()
-                                //                            Text("Thinking....").font(.largeTitle)
                             }
                         }
                     }

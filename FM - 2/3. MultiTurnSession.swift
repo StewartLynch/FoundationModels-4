@@ -100,10 +100,8 @@ struct MultiTurnSession: View {
                         .frame(maxWidth: .infinity, alignment: .trailing)
                         .padding(.horizontal)
                         .buttonStyle(.glass)
-
                         .disabled(session.transcript.count  <= 1 || session.isResponding )
                     }
-
             }
             .background(
                 GeometryReader { proxy in
