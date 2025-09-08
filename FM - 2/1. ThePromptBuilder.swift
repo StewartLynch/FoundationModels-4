@@ -58,7 +58,26 @@ struct ThePromptBuilder: View {
                             "Focus the exercies on \(stretchType.rawValue)"
                             "Have the exerecise last for \(Int(length)) minutes"
                         }
-                        response = await manager.getResponse(from: prompt, session: session)
+                        do {
+                            response = manager.minimizeMarkDown(try await session.respond(to: prompt).content)
+                        } catch let error as LanguageModelSession.GenerationError {
+                            switch error {
+                            case .guardrailViolation(let context):
+                                print("Guardrail violation: \(context.debugDescription)")
+                            case .decodingFailure(let context):
+                                print("Decoding failure: \(context.debugDescription)")
+                            default:
+                                print("Other error: \(error.localizedDescription)")
+                            }
+                            if let failureReason = error.failureReason {
+                                print(failureReason)
+                            }
+                            if let recoverySuggestion = error.recoverySuggestion {
+                                print(recoverySuggestion)
+                            }
+                        } catch {
+                            print(error.localizedDescription)
+                        }
                     }
                 }
                 .buttonStyle(.glassProminent)

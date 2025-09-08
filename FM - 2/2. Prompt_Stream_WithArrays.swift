@@ -36,18 +36,31 @@ struct Prompt_Stream_WithArrays: View {
                     guard manager.checkIsAvailable() else { return }
                     response = ""
                     Task {
-//                        let stream = session.streamResponse(to: prompt)
-//                        for try await partial in stream {
-//                            response =  partial.content
-//                        }
-                        await manager.getStream(from: prompt, session: session) { content in
-                            response = manager.minimizeMarkDown(content)
+                        let stream = session.streamResponse(to: prompt)
+                        do {
+                            for try await partial in stream {
+                                response = manager.minimizeMarkDown(partial.content)
+                            }
+                        } catch let error as LanguageModelSession.GenerationError {
+                            switch error {
+                            case .guardrailViolation(let context):
+                                print("Guardrail violation: \(context.debugDescription)")
+                            case .decodingFailure(let context):
+                                print("Decoding failure: \(context.debugDescription)")
+                            default:
+                                print("Other error: \(error.localizedDescription)")
+                            }
+                            if let failureReason = error.failureReason {
+                                print(failureReason)
+                            }
+                            if let recoverySuggestion = error.recoverySuggestion {
+                                print(recoverySuggestion)
+                            }
+                        } catch {
+                            print(error.localizedDescription)
                         }
                     }
-//                }
-//                        response = await manager.getResponse(from: prompt, session: session)
-                    }
-//                }
+                }
                 .buttonStyle(.glassProminent)
                 ScrollView{
                     Text(LocalizedStringKey(response))
@@ -61,7 +74,7 @@ struct Prompt_Stream_WithArrays: View {
                     if session.isResponding {
                         VStack {
                             ProgressView()
-//                            Text("Thinking....").font(.largeTitle)
+                            //                            Text("Thinking....").font(.largeTitle)
                         }
                     }
                 }

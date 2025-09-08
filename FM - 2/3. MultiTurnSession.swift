@@ -133,8 +133,29 @@ struct MultiTurnSession: View {
         Task {
             let prompt = Prompt(trimmedQuestion)
             // Do not need the response as we are just looking at the transcript
-            // If it were not a discardable result we would need _ = await ...
-            await manager.getResponse(from: prompt, session: session)
+            let stream = session.streamResponse(to: prompt)
+            do {
+                for try await partial in stream {
+                    _ = manager.minimizeMarkDown(partial.content)
+                }
+            } catch let error as LanguageModelSession.GenerationError {
+                switch error {
+                case .guardrailViolation(let context):
+                    print("Guardrail violation: \(context.debugDescription)")
+                case .decodingFailure(let context):
+                    print("Decoding failure: \(context.debugDescription)")
+                default:
+                    print("Other error: \(error.localizedDescription)")
+                }
+                if let failureReason = error.failureReason {
+                    print(failureReason)
+                }
+                if let recoverySuggestion = error.recoverySuggestion {
+                    print(recoverySuggestion)
+                }
+            } catch {
+                print(error.localizedDescription)
+            }
             withAnimation {
                 scrollPosition.scrollTo(edge: .bottom)
             }

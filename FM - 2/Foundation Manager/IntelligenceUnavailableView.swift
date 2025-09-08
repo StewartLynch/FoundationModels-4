@@ -21,7 +21,7 @@ struct IntelligenceUnavailableView: View {
     @Environment(FoundationManager.self) var checker
     var body: some View {
         ContentUnavailableView {
-            Label("AI Not available", systemImage: "siri")
+            Label("AI Not available", systemImage: "apple.intelligence")
         } description: {
             Text(checker.notAvailableReason)
         } actions: {
