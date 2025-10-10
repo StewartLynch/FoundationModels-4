@@ -1,6 +1,6 @@
 # Foundation Models 4 - Transcripts
 
-![AppIcon128](Images/AppIcon128.png) This is the completed source code for the 4th video in the Foundation Models Framework series
+![AppIcon128](Images/AppIcon128.png) This is the Starter project for the 4th video in the Foundation Models Framework series
 
 Release Date: November 9, 2025
 
