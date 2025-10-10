@@ -1,6 +1,6 @@
 {
   "fill" : {
-    "automatic-gradient" : "display-p3:0.15678,0.79303,0.92264,1.00000"
+    "automatic-gradient" : "display-p3:0.83632,0.00000,0.92264,1.00000"
   },
   "groups" : [
     {
@@ -20,17 +20,6 @@
             "translation-in-points" : [
               -182.8203125,
               -275.46484375
-            ]
-          }
-        },
-        {
-          "image-name" : "2.circle.fill.png",
-          "name" : "2.circle.fill",
-          "position" : {
-            "scale" : 1.44,
-            "translation-in-points" : [
-              -234,
-              98
             ]
           }
         },
@@ -56,6 +45,17 @@
             "translation-in-points" : [
               183.64453125,
               -278.95703125
+            ]
+          }
+        },
+        {
+          "image-name" : "3.circle.fill 2.png",
+          "name" : "3.circle.fill 2",
+          "position" : {
+            "scale" : 1.4,
+            "translation-in-points" : [
+              -227.6171875,
+              98.640625
             ]
           }
         }
@@ -85,7 +85,7 @@
       ],
       "name" : "Group",
       "position" : {
-        "scale" : 1.85,
+        "scale" : 1.87,
         "translation-in-points" : [
           129.76171875,
           191.03125

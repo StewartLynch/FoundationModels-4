@@ -1,6 +1,6 @@
 //
 //----------------------------------------------
-// Original project: FM - 2
+// Original project: FM - 4
 // by  Stewart Lynch on 2025-08-31
 //
 // Follow me on Mastodon: https://iosdev.space/@StewartLynch
@@ -22,22 +22,37 @@ import FoundationModels
 
 #Playground("Basic") {
     let session = LanguageModelSession()
-//    let prompt = "What are the colors of the rainbow"
     let prompt = Prompt("What are the colors of the rainbow")
-    Task {
-        try await session.respond(to: prompt)
-    }
+    try await session.respond(to: prompt)
 }
 
 #Playground("Prompt Builder") {
     let session = LanguageModelSession()
-//    let prompt = "What are the colors of the rainbow"
     let prompt = Prompt {
         "I want an exercise routine"
         "I want it to focus on the lower back"
-        "I want it to be for 20 minutes"
+        "I want it to be for 20 minutes."
     }
-    Task {
-        try await session.respond(to: prompt)
-    }
+    try await session.respond(to: prompt)
+}
+
+//#Playground("Guided Generation") {
+//    let session = LanguageModelSession()
+//    let prompt = Prompt {
+//        "Recommend some exercises for a total length of 10 minutes."
+//        "Your clients are in the age group over 65 years old."
+//        "The fitness level should be intermediate."
+//        "If the exercise requires holding position, make sure to indicate how long to hold each position."
+//    }
+//    
+//    try await session.respond(to: prompt, generating: [Exercise].self)
+//}
+
+#Playground("Transcript") {
+    let session = LanguageModelSession(instructions: "You are a helpful travel agent.")
+    let prompt = "I am going to visit Paris, France"
+    try await session.respond(to: prompt)
+    let prompt2 = "What sites should I visit"
+    try await session.respond(to: prompt2)
+    session.transcript
 }

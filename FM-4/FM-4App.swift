@@ -1,6 +1,6 @@
 //
 //----------------------------------------------
-// Original project: FM - 2
+// Original project: FM-4
 // by  Stewart Lynch on 2025-08-31
 //
 // Follow me on Mastodon: https://iosdev.space/@StewartLynch
@@ -18,14 +18,12 @@
 import SwiftUI
 
 @main
-struct AI_Mastery_P1App: App {
+struct FM_4App: App {
     @State private var manager = FoundationManager()
-    @State private var navManager = NavManager()
     var body: some Scene {
         WindowGroup {
-            StartTab()
+            TravelAgent()
                 .environment(manager)
-                .environment(navManager)
         }
     }
 }

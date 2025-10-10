@@ -1,6 +1,6 @@
 //
 //----------------------------------------------
-// Original project: FM - 2
+// Original project: FM - 4
 // by  Stewart Lynch on 2025-08-31
 //
 // Follow me on Mastodon: https://iosdev.space/@StewartLynch
@@ -46,10 +46,9 @@ final class FoundationManager {
         return isModelAvailable
     }
     
-#warning("Added for this video")
     func minimizeMarkDown(_ content: String) -> String {
-        var content = content
         let tags = ["#", "##", "###", "####", "---"]
+        var content = content
         tags.forEach { tag in
             content = content.replacingOccurrences(of: tag, with: "")
         }

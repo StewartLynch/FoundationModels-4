@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "BB1F854F2E64E6DE0089FA0D"
-               BuildableName = "FM - 2.app"
-               BlueprintName = "FM - 2"
-               ReferencedContainer = "container:FM - 2.xcodeproj">
+               BuildableName = "FM-4.app"
+               BlueprintName = "FM-4"
+               ReferencedContainer = "container:FM-4.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BB1F854F2E64E6DE0089FA0D"
-            BuildableName = "FM - 2.app"
-            BlueprintName = "FM - 2"
-            ReferencedContainer = "container:FM - 2.xcodeproj">
+            BuildableName = "FM-4.app"
+            BlueprintName = "FM-4"
+            ReferencedContainer = "container:FM-4.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BB1F854F2E64E6DE0089FA0D"
-            BuildableName = "FM - 2.app"
-            BlueprintName = "FM - 2"
-            ReferencedContainer = "container:FM - 2.xcodeproj">
+            BuildableName = "FM-4.app"
+            BlueprintName = "FM-4"
+            ReferencedContainer = "container:FM-4.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
