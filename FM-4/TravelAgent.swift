@@ -42,6 +42,5 @@ struct TravelAgent: View {
 
 #Preview {
     TravelAgent()
-        .environment(FoundationManager())
 }
 
