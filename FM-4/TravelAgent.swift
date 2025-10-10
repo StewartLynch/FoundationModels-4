@@ -31,6 +31,7 @@ struct TravelAgent: View {
                         }
                 }
             }
+            .padding()
             .navigationTitle("Travel Agent")
             
         }
