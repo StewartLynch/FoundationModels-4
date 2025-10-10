@@ -23,13 +23,11 @@ struct TravelAgent: View {
         NavigationStack{
             VStack {
                 ContentUnavailableView("How can I help?", systemImage: "questionmark.message", description: Text("I am your friendly Tourist Infomation Guide"))
-                HStack {
-                    TextField("Ask away ...", text: $question)
-                        .textFieldStyle(.roundedBorder)
-                        .onSubmit {
-                            // Send Question
-                        }
-                }
+                TextField("Ask away ...", text: $question)
+                    .textFieldStyle(.roundedBorder)
+                    .onSubmit {
+                        // Send Question
+                    }
             }
             .padding()
             .navigationTitle("Travel Agent")
