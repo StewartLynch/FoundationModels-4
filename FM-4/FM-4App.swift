@@ -19,11 +19,9 @@ import SwiftUI
 
 @main
 struct FM_4App: App {
-    @State private var manager = FoundationManager()
     var body: some Scene {
         WindowGroup {
             TravelAgent()
-                .environment(manager)
         }
     }
 }

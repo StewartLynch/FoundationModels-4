@@ -48,11 +48,3 @@ import FoundationModels
 //    try await session.respond(to: prompt, generating: [Exercise].self)
 //}
 
-#Playground("Transcript") {
-    let session = LanguageModelSession(instructions: "You are a helpful travel agent.")
-    let prompt = "I am going to visit Paris, France"
-    try await session.respond(to: prompt)
-    let prompt2 = "What sites should I visit"
-    try await session.respond(to: prompt2)
-    session.transcript
-}
