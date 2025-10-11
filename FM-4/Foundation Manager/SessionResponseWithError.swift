@@ -1,37 +1,28 @@
-//
-//----------------------------------------------
-// Original project: FM-4
-// by  Stewart Lynch on 2025-09-07
-//
-// Follow me on Mastodon: https://iosdev.space/@StewartLynch
-// Follow me on Threads: https://www.threads.net/@stewartlynch
-// Follow me on Bluesky: https://bsky.app/profile/stewartlynch.bsky.social
-// Follow me on X: https://x.com/StewartLynch
-// Follow me on LinkedIn: https://linkedin.com/in/StewartLynch
-// Email: slynch@createchsol.com
-// Subscribe on YouTube: https://youTube.com/@StewartLynch
-// Buy me a ko-fi:  https://ko-fi.com/StewartLynch
-//----------------------------------------------
-// Copyright © 2025 CreaTECH Solutions. All rights reserved.
-
-
 /*
- catch let error as LanguageModelSession.GenerationError {
+ 
+ do {
+     responseContent = try await session.respond(to: prompt).content
+ } catch let error as LanguageModelSession.GenerationError {
      switch error {
      case .guardrailViolation(let context):
-         print("Guardrail violation: \(context.debugDescription)")
+         responseContent = "Guardrail Violation: \(context.debugDescription)"
      case .decodingFailure(let context):
-         print("Decoding failure: \(context.debugDescription)")
+         responseContent = "Decoding Failure: \(context.debugDescription)"
+     case .rateLimited(let context):
+         responseContent = "Rate Limit exceeded: \(context.debugDescription)"
      default:
-         print("Other error: \(error.localizedDescription)")
+         responseContent = "Other error: \(error.localizedDescription)"
      }
      if let failureReason = error.failureReason {
-         print(failureReason)
+         responseContent += "\n\(failureReason)"
      }
      if let recoverySuggestion = error.recoverySuggestion {
-         print(recoverySuggestion)
+         responseContent += "\n\(recoverySuggestion)"
      }
+ 
  } catch {
-     print(error.localizedDescription)
+     responseContent = error.localizedDescription
  }
+ 
  */
+
