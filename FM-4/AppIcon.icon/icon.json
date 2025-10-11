@@ -49,13 +49,13 @@
           }
         },
         {
-          "image-name" : "3.circle.fill 2.png",
-          "name" : "3.circle.fill 2",
+          "image-name" : "4.circle.fill.png",
+          "name" : "4.circle.fill",
           "position" : {
-            "scale" : 1.4,
+            "scale" : 1.29,
             "translation-in-points" : [
-              -227.6171875,
-              98.640625
+              -225.20703125,
+              97.7734375
             ]
           }
         }

@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "AppIcon-iOS-Default-64x64@3x.png",
+      "filename" : "4256Light.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -12,7 +12,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "AppIcon-iOS-Dark-64x64@3x.png",
+      "filename" : "4256Dark.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
